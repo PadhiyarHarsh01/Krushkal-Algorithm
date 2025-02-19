@@ -45,7 +45,7 @@ Optimal-Road-Construction/
 
 ### 🔹 Step 1: Clone the Repository
 ```bash
-git clone https://github.com/yourusername/Optimal-Road-Construction.git
+git clone https://github.com/PadhiyarHarsh01/Krushkal-Algorithm.git
 cd Optimal-Road-Construction
 ```
 
