@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Optimal Road Construction</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Optimal Road Construction</h1>
+        <p>Using Kruskal's Algorithm to find the Minimum Spanning Tree (MST).</p>
+
+        <!-- Input Section -->
+        <div class="input-section">
+            <input type="text" id="node1" placeholder="From (A, B, C...)">
+            <input type="text" id="node2" placeholder="To (A, B, C...)">
+            <input type="number" id="cost" placeholder="Cost">
+            <button onclick="addEdge()">Add Edge</button>
+        </div>
+
+        <!-- Display Added Edges -->
+        <div id="graph-edges">
+            <h3>Graph Edges</h3>
+            <div id="edges-list"></div>
+        </div>
+
+        <!-- MST Result -->
+        <button onclick="calculateMST()">Find MST</button>
+        <div id="result">
+            <h2>Results:</h2>
+            <div id="mst"></div>
+            <div id="total-cost"></div>
+        </div>
+    </div>
+
+    <script>
+        let graph = {};
+
+        function addEdge() {
+            const node1 = document.getElementById("node1").value.toUpperCase();
+            const node2 = document.getElementById("node2").value.toUpperCase();
+            const cost = parseInt(document.getElementById("cost").value);
+
+            if (!node1 || !node2 || isNaN(cost)) return;
+
+            if (!graph[node1]) graph[node1] = {};
+            if (!graph[node2]) graph[node2] = {};
+            graph[node1][node2] = cost;
+            graph[node2][node1] = cost;
+
+            // Display edges dynamically
+            const edgeList = document.getElementById("edges-list");
+            const edgeDiv = document.createElement("div");
+            edgeDiv.className = "edge";
+            edgeDiv.innerText = `${node1} - ${node2}: ${cost}`;
+            edgeList.appendChild(edgeDiv);
+
+            // Clear input fields
+            document.getElementById("node1").value = "";
+            document.getElementById("node2").value = "";
+            document.getElementById("cost").value = "";
+        }
+
+        function calculateMST() {
+            fetch('/calculate_mst', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ graph })
+            })
+            .then(response => response.json())
+            .then(data => {
+                const mstElement = document.getElementById('mst');
+                const totalCostElement = document.getElementById('total-cost');
+
+                mstElement.innerHTML = '<h3>Minimum Spanning Tree:</h3>';
+                data.mst.forEach(edge => {
+                    mstElement.innerHTML += `<div class="edge">${edge[0]} - ${edge[1]}: ${edge[2]}</div>`;
+                });
+
+                totalCostElement.innerHTML = `<h3>Total Cost: ${data.total_cost}</h3>`;
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    </script>
+</body>
+</html>
